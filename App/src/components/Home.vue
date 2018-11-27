@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-sm-6 col-md-4 col-md-offset-4">
             <div class="account-wall">
-                <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                <img class="profile-img" src="../assets/logo.png"
                     alt="">
                 <form class="form-signin">
                 <input type="text" class="form-control" v-model='input.username' placeholder="Email" required autofocus>
