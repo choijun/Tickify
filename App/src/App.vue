@@ -1,13 +1,37 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
+  <div id="dashboard">
     <router-view/>
   </div>
 </template>
 
 <script>
+/* eslint-disable */
+
 export default {
-  name: 'App'
+  name: 'dashboard',
+  data() {
+    return {
+      authenticated: false,
+      mockAccount: {
+        username: 'init@init.nl',
+        password: 'init'
+      }
+    }
+  },
+  mounted(){
+    if(!this.authenticated) {
+                this.$router.replace({ name: "Home" });
+            }
+        },
+        methods: {
+            setAuthenticated(status) {
+                this.authenticated = status;
+                this.authenticated = true;
+            },
+            logout() {
+                this.authenticated = false;
+            }
+        }
 }
 </script>
 
