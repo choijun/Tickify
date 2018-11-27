@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/pierreguerin0341/Tickify/issues"
   },
-  "homepage": "https://github.com/pierreguerin0341/Tickify#readme"
+  "homepage": "https://github.com/pierreguerin0341/Tickify#readme",
+  "dependencies": {
+    "vue": "^2.5.17"
+  }
 }
