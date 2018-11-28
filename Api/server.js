@@ -51,7 +51,7 @@ router.route('/users')
         user.password = req.body.password;
         user.user_role = req.body.user_role;
 
-        // save the bear and check for errors
+        // save the user and check for errors
         user.save(function(err) {
             if (err)
                 res.send(err);
@@ -71,7 +71,7 @@ router.route('/users')
 
     router.route('/users/:username&:password')
 
-    // get the users with that id (accessed at GET http://localhost:8080/api/users/:username)
+    // get the users with that id (accessed at GET http://localhost:8080/api/users/:username&:password)
     .get(function(req, res) {
         User.findOne({ username: req.params.username, password: req.params.password}, function(err, user) {
             if (err)
