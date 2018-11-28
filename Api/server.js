@@ -7,7 +7,7 @@
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
-var User     = require('./app/models/user');
+var User     = require('./models/user');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -38,6 +38,49 @@ router.get('/', function(req, res) {
 });
 
 // more routes for our API will happen here
+// on routes that end in /users
+// ----------------------------------------------------
+router.route('/users')
+
+
+    // create a bear (accessed at POST http://localhost:8080/api/users)
+    .post(function(req, res) {
+
+        var user = new User();      // create a new instance of the user model
+        user.username = req.body.username;  // set the users name (comes from the request)
+        user.password = req.body.password;
+        user.user_role = req.body.user_role;
+
+        // save the bear and check for errors
+        user.save(function(err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'user created!' });
+        });
+    })
+
+    // get all the users (accessed at GET http://localhost:8080/api/users)
+    .get(function(req, res) {
+        User.find(function(err, users) {
+            if (err)
+                res.send(err);
+
+            res.json(users);
+        });
+    })
+
+    router.route('/users/:username&:password')
+
+    // get the users with that id (accessed at GET http://localhost:8080/api/users/:username)
+    .get(function(req, res) {
+        User.findOne({ username: req.params.username, password: req.params.password}, function(err, user) {
+            if (err)
+                res.send(err);
+            res.json(user);
+        });
+    });
+
+
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
