@@ -29,6 +29,9 @@
 
 <script>
 /* eslint-disable */
+import axios from 'axios';
+
+
 export default {
   name: 'Home',
   data () {
@@ -43,12 +46,19 @@ export default {
   methods: {
     login() {
       if(this.input.username != '' && this.input.password != '') {
-          if(this.input.username == this.$parent.mockAccount.username && this.input.password == this.$parent.mockAccount.password) {
-              this.$emit('authenticated', true);
-              this.$router.replace({ name: 'secure'});
-          } else {
-            console.log('The username and / or password is incorrect')
-          }
+          //We should execute our Axios here. 
+          axios.get('http://localhost:8080/api/users/'+this.input.username+'&'+this.input.password)
+            .then(function (response) {
+                // handle success
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
       } else {
           console.log('A username and password must be present')
       }

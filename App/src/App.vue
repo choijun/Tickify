@@ -6,7 +6,6 @@
 
 <script>
 /* eslint-disable */
-
 export default {
   name: 'dashboard',
   data() {
