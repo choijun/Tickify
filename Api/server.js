@@ -8,8 +8,11 @@ var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var User     = require('./models/user');
+var bcrypt     = require('bcrypt');
+const saltRounds = 10;
+const myPlaintextPassword = 's0/\/\P4$$w0rD';
+const someOtherPlaintextPassword = 'not_bacon';
 
-// configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -50,13 +53,14 @@ router.route('/users')
         user.username = req.body.username;  // set the users name (comes from the request)
         user.password = req.body.password;
         user.user_role = req.body.user_role;
-
-        // save the user and check for errors
-        user.save(function(err) {
-            if (err)
-                res.send(err);
-            res.json({ message: 'user created!' });
+        bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+            user.save(function(err) {
+                if (err)
+                    res.send(err);
+                res.json({ message: 'user created!' });
+            });
         });
+        // save the user and check for errors
     })
 
     // get all the users (accessed at GET http://localhost:8080/api/users)
@@ -80,7 +84,19 @@ router.route('/users')
         });
     });
 
+    router.route('/user/login')
+    .post(function(req, res) {
 
+        var user = new User();      // create a new instance of the user model
+        user.username = req.body.username;  // set the users name (comes from the request)
+        user.password = req.body.password;
+        // Create Session
+        User.findOne({ username: req.params.username, password: req.params.password}, function(err, user) {
+            if (err)
+            res.send(err);
+        res.json(user);
+        });
+    });
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
