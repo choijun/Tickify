@@ -47,7 +47,7 @@ export default {
     login() {
       if(this.input.username != '' && this.input.password != '') {
           //We should execute our Axios here. 
-          axios.get('http://localhost:8080/api/users/'+this.input.username+'&'+this.input.password)
+          axios.post('http://localhost:8080/api/user/login/'+this.input.username+'&'+this.input.password)
             .then(function (response) {
                 // handle success
                 console.log(response);

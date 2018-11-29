@@ -9,9 +9,12 @@ var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var User     = require('./models/user');
 var bcrypt     = require('bcrypt');
+var jwt = require('jsonwebtoken');
 const saltRounds = 10;
 const myPlaintextPassword = 's0/\/\P4$$w0rD';
 const someOtherPlaintextPassword = 'not_bacon';
+//DONT FORGET TO CHANGE THIS SECRET KEY
+var secret = "init123"
 
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,8 +47,6 @@ router.get('/', function(req, res) {
 // on routes that end in /users
 // ----------------------------------------------------
 router.route('/users')
-
-
     // create a bear (accessed at POST http://localhost:8080/api/users)
     .post(function(req, res) {
 
@@ -64,7 +65,6 @@ router.route('/users')
         });
     })
 
-    // get all the users (accessed at GET http://localhost:8080/api/users)
     .get(function(req, res) {
         User.find(function(err, users) {
             if (err)
@@ -75,8 +75,6 @@ router.route('/users')
     })
 
     router.route('/users/:username&:password')
-
-    // get the users with that id (accessed at GET http://localhost:8080/api/users/:username&:password)
     .get(function(req, res) {
         User.findOne({ username: req.params.username, password: req.params.password}, function(err, user) {
             if (err)
@@ -87,22 +85,24 @@ router.route('/users')
 
     router.route('/user/login')
     .post(function(req, res) {
-
         var user = new User();      // create a new instance of the user model
         user.username = req.body.username;  // set the users name (comes from the request)
         user.password = req.body.password;
-        console.log('Logging..');
-        console.log(user.username);
-        console.log(user.password);
-
-        //Get User from db.
         User.findOne({ username: user.username}, function(err, dbuser) {
             if (err)
                 res.send(err);
                 console.log('Error');
             
-            bcrypt.compare(user.username, dbuser.password, function(err, res) {
+            bcrypt.compare(user.username, dbuser.password, function(err, compareResult) {
                 console.log('Match!')
+                // create a token
+                var token = jwt.sign({ username: user.username }, secret, {
+                    expiresIn: 86400 // expires in 24 hours
+                });
+                res.status(200).send({ auth: true, token: token });
+                console.log(token);
+                //res.cookie('username', user.username);
+                //res.send('Check your cookies. One should be in there now');
             });
         });
     });
