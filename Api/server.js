@@ -53,14 +53,15 @@ router.route('/users')
         user.username = req.body.username;  // set the users name (comes from the request)
         user.password = req.body.password;
         user.user_role = req.body.user_role;
-        bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+        bcrypt.hash(user.password, saltRounds, function(err, hash) {
+            user.password = hash;
+            console.log(user.password);
             user.save(function(err) {
                 if (err)
                     res.send(err);
                 res.json({ message: 'user created!' });
             });
         });
-        // save the user and check for errors
     })
 
     // get all the users (accessed at GET http://localhost:8080/api/users)
@@ -90,11 +91,19 @@ router.route('/users')
         var user = new User();      // create a new instance of the user model
         user.username = req.body.username;  // set the users name (comes from the request)
         user.password = req.body.password;
-        // Create Session
-        User.findOne({ username: req.params.username, password: req.params.password}, function(err, user) {
+        console.log('Logging..');
+        console.log(user.username);
+        console.log(user.password);
+
+        //Get User from db.
+        User.findOne({ username: user.username}, function(err, dbuser) {
             if (err)
-            res.send(err);
-        res.json(user);
+                res.send(err);
+                console.log('Error');
+            
+            bcrypt.compare(user.username, dbuser.password, function(err, res) {
+                console.log('Match!')
+            });
         });
     });
 
