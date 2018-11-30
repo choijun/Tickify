@@ -34,6 +34,8 @@ var router = express.Router();              // get an instance of the express Ro
 // middleware to use for all requests
 router.use(function(req, res, next) {
     // do logging
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     console.log('Something is happening.');
     next(); // make sure we go to the next routes and don't stop here
 });
@@ -83,7 +85,7 @@ router.route('/users')
         });
     });
 
-    router.route('/user/login')
+    router.route('/user/login/')
     .post(function(req, res) {
         var user = new User();      // create a new instance of the user model
         user.username = req.body.username;  // set the users name (comes from the request)
