@@ -8,11 +8,12 @@ var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var User     = require('./models/user');
+var Ticket   = require('./models/tickets')
 var bcrypt     = require('bcrypt');
 var jwt = require('jsonwebtoken');
 const saltRounds = 10;
-const myPlaintextPassword = 's0/\/\P4$$w0rD';
-const someOtherPlaintextPassword = 'not_bacon';
+var mongoose   = require('mongoose');
+
 //DONT FORGET TO CHANGE THIS SECRET KEY
 var secret = "init123"
 
@@ -23,7 +24,6 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8080;        // set our port
 
 //Setting up the DB connection
-var mongoose   = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/tickify'); //Absolutely change this to your DB...
 
 // ROUTES FOR OUR API
@@ -103,9 +103,37 @@ router.route('/users')
                 });
                 res.status(200).send({ auth: true, token: token });
                 console.log(token);
-                //res.cookie('username', user.username);
-                //res.send('Check your cookies. One should be in there now');
             });
+        });
+    });
+
+ //Router for Tickets: Creating, Editing, Posting and Deleting.
+ router.route('/tickets')  
+ //Get All tickets
+ .get(function(req, res) {
+    Ticket.find(function(err, tickets) {
+        if (err)
+            res.send(err);
+
+        res.json(tickets);
+    });
+})
+
+.post(function(req, res) {
+
+    var ticket = new Ticket();      // create a new instance of the user model
+    ticket.category = req.body.category;
+    ticket.prioririty = req.body.prioririty;
+    ticket.title = req.body.title;
+    ticket.content = req.body.content;
+    ticket.assigned = req.body.assigned;
+    ticket.raised = req.body.raised;
+    ticket.date = req.body.date;
+    ticket.lastupdated = req.body.lastupdated;
+        ticket.save(function(err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'ticket created!' });
         });
     });
 
