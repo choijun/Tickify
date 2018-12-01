@@ -1,8 +1,4 @@
 
-    <script>
-        /* eslint-disable */
-    </script>
-
 <template>
 <div class="hello">
 
@@ -18,12 +14,13 @@ import VueCookies from 'vue-cookies'
 import axios from 'axios';
 
 export default {
+    /* eslint-disable */
   name: 'Dashboard',
   data(){
       return{
           IsLoggedIn: this.$cookies.get("auth"),       // return value              
           LoggedInUser: this.$cookies.get("user"),       // return value       
-          Tickets: ""                      
+          Tickets: ""                   
       }
   },
   methods:{
