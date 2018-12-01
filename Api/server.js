@@ -13,13 +13,25 @@ var bcrypt     = require('bcrypt');
 var jwt = require('jsonwebtoken');
 const saltRounds = 10;
 var mongoose   = require('mongoose');
+var cors = require('cors');
 
 //DONT FORGET TO CHANGE THIS SECRET KEY
 var secret = "init123"
 
 // this will let us get the data from a POST
+const corsOptions = {
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    preflightContinue: true,
+    maxAge: 600,
+  };
+
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 
 var port = process.env.PORT || 8080;        // set our port
 
@@ -29,13 +41,9 @@ mongoose.connect('mongodb://localhost:27017/tickify'); //Absolutely change this 
 // ROUTES FOR OUR API
 // =============================================================================
 var router = express.Router();              // get an instance of the express Router
-
-
 // middleware to use for all requests
+
 router.use(function(req, res, next) {
-    // do logging
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     console.log('Something is happening.');
     next(); // make sure we go to the next routes and don't stop here
 });
@@ -58,7 +66,6 @@ router.route('/users')
         user.user_role = req.body.user_role;
         bcrypt.hash(user.password, saltRounds, function(err, hash) {
             user.password = hash;
-            console.log(user.password);
             user.save(function(err) {
                 if (err)
                     res.send(err);
@@ -93,16 +100,18 @@ router.route('/users')
         User.findOne({ username: user.username}, function(err, dbuser) {
             if (err)
                 res.send(err);
-                console.log('Error');
+                
             
-            bcrypt.compare(user.username, dbuser.password, function(err, compareResult) {
+            bcrypt.compare(user.password, dbuser.password, function(err, compareResult) {
                 console.log('Match!')
                 // create a token
                 var token = jwt.sign({ username: user.username }, secret, {
                     expiresIn: 86400 // expires in 24 hours
                 });
+                res.cookie("auth",token);
+                res.cookie("user", user.username);
                 res.status(200).send({ auth: true, token: token });
-                console.log(token);
+                console.log('executed');
             });
         });
     });
@@ -120,7 +129,6 @@ router.route('/users')
 })
 
 .post(function(req, res) {
-
     var ticket = new Ticket();      // create a new instance of the user model
     ticket.category = req.body.category;
     ticket.prioririty = req.body.prioririty;

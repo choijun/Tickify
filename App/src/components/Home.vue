@@ -30,6 +30,8 @@
 <script>
 /* eslint-disable */
 import axios from 'axios';
+import Router from '@/router/index.js'
+axios.defaults.withCredentials = true;
 
 
 export default {
@@ -47,18 +49,20 @@ export default {
     login() {
       if(this.input.username != '' && this.input.password != '') {
           //We should execute our Axios here. 
+         
           axios.post('http://localhost:8080/api/user/login',{
             username:this.input.username,
             password:this.input.password   
           })
             .then(function (response) {
                 // handle success
-                console.log(response);
-                console.log('Logged in!')
+                Router.push('Dashboard')
             })
             .catch(function (error) {
                 // handle error
-                console.log(error);
+                console.log(JSON.stringify(error.data));
+                console.log(error.status);
+                console.log(error.headers);
             })
             .then(function () {
                 // always executed
