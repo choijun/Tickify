@@ -11,7 +11,7 @@ Thanks a lot for this beauty!
 
 1. Clone repository
 ```shell
-git clone https://github.com/flatlogic/sing-app-vue-dashboard
+git clone https://github.com/pierreguerin0341/Tickify
 ```
 2. Get in the project folder
 ```shell
